@@ -45,7 +45,8 @@ namespace Youtube {
             }
         }
 
-        public static string ApiKey { get; } = "AIzaSyDmZ5rGzV38mrGfcSMPegvx8xxndSHmnT4";
+        //ENTER API KEY HERE
+        public static string ApiKey { get; } = "";
 
         public override void OnCommandRecieved(string CommandName, string UserInput) {
             if(CommandName == "play id") {
