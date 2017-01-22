@@ -20,9 +20,7 @@ namespace Youtube {
     /// Interaction logic for YoutubeVideo.xaml
     /// </summary>
     public partial class YoutubeVideo : Window {
-            
-        const string API_KEY = "AIzaSyDmZ5rGzV38mrGfcSMPegvx8xxndSHmnT4";
-        
+                    
         string videoID = "";
         SearchResult video;
         string videoUrl {
@@ -32,7 +30,7 @@ namespace Youtube {
         }
         string queryUrl {
             get {
-                return $@"https://www.googleapis.com/youtube/v3/videos?id={videoID}&key={API_KEY}&part=status&fields=items(id,status(uploadStatus,privacyStatus))";
+                return $@"https://www.googleapis.com/youtube/v3/videos?id={videoID}&key={YoutubeHook.ApiKey}&part=status&fields=items(id,status(uploadStatus,privacyStatus))";
             }
         }
         
