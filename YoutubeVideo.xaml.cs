@@ -57,6 +57,7 @@ namespace Youtube {
 
             Closing += YoutubeVideo_Closing;
         }
+
         public YoutubeVideo(string _id) {
             InitializeComponent();
 
