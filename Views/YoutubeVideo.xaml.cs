@@ -93,12 +93,14 @@ namespace Youtube {
             Browser.Navigate(videoUrl);
 
 
+            WindowState = WindowState.Maximized;
 
-            Width = SystemParameters.PrimaryScreenWidth / 1.4;
-            Height = SystemParameters.PrimaryScreenHeight / 1.4;
+            //Width = SystemParameters.PrimaryScreenWidth;
+            //Height = SystemParameters.PrimaryScreenHeight;
 
-            Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-            Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
+            //Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+            //Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
+
         }
     }
 }
