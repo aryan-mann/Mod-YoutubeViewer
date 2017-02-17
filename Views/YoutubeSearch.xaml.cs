@@ -70,7 +70,7 @@ namespace Youtube {
 
             SearchResource.ListRequest req = new SearchResource.ListRequest(ys, "snippet") {
                 Q = searchQ,
-                MaxResults = 20
+                MaxResults = 50
             };
 
             SearchListResponse resp = req.Execute();
