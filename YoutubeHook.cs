@@ -33,23 +33,44 @@ namespace Youtube {
             ["search"] = new Regex(@"^search (?<name>.+?)$"),
             ["force search"] = new Regex(@"^force (?<name>.+)$"),
             ["choose"] = new Regex(@"^choose (?<choice>\d{1,2})$"),
-            ["close"] = new Regex(@"^(close|stop)$")
+            ["close"] = new Regex(@"^(close|stop)$"),
+            ["window state"] = new Regex(@"^window state (?<state>(min|max)(imize)?)$")
         };
 
         //ENTER API KEY HERE
-        public static string ApiKey { get; } = "AIzaSyDmZ5rGzV38mrGfcSMPegvx8xxndSHmnT4";
+        public static string ApiKey { get; } = "";
 
         public SearchListResponse LastSearchResponse;
-        public YoutubeVideo Current;
+        public static YoutubeVideo Current;
+        public static WindowState State = WindowState.Maximized;
+
+        private YoutubeVideo _video;
 
         public override void OnCommandRecieved(Command cmd) {
 
             string commandName = cmd.LocalCommand;
             string userInput = cmd.UserInput;
 
+            if (string.IsNullOrEmpty(ApiKey)) {
+
+                if (!cmd.IsLocalCommand) {
+                    cmd.Respond("Invalid API Key.");
+                }
+
+                return;
+            }
+
             if(commandName == "play id") {
                 string id = RegisteredCommands[commandName].Match(userInput).Groups["id"].Value.ToString();
-                new YoutubeVideo(id).Show();
+
+                if(Current != null) {
+                    if(Current.IsLoaded) {
+                        Current.Close();
+                    }
+                }
+
+                Current = new YoutubeVideo(id);
+                Current.Show();
             }
 
             if(commandName == "search") {
@@ -67,7 +88,7 @@ namespace Youtube {
 
                         SearchResource.ListRequest req = new SearchResource.ListRequest(ys, "snippet") {
                             Q = name,
-                            MaxResults = 20
+                            MaxResults = 30
                         };
 
                         LastSearchResponse = req.Execute();
@@ -129,6 +150,20 @@ namespace Youtube {
                         Current.Close();
                     }
                 }
+            }
+
+            if (commandName == "window state") {
+                string state = RegisteredCommands[commandName].Match(userInput).Groups["state"].Value.ToLower();
+
+                switch (state) {
+                    case "min": 
+                    case "minimize": State = WindowState.Minimized;
+                        break;
+                    case "max":
+                    case "maximize": State = WindowState.Maximized;
+                        break;
+                }
+
             }
         }
 

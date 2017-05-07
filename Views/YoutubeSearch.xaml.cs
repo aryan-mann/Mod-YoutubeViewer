@@ -45,12 +45,20 @@ namespace Youtube {
             if(stacker.SelectedItem != null) {
                 ListBoxItem lbi = (ListBoxItem) stacker.SelectedValue;
                 if(lbi != null) {
-                    new YoutubeVideo(((SearchResult) lbi.DataContext)).Show();
+
+                    if(YoutubeHook.Current != null) {
+                        if(YoutubeHook.Current.IsLoaded) {
+                            YoutubeHook.Current.Close();
+                        }
+                    }
+
+                    YoutubeHook.Current = new YoutubeVideo(((SearchResult) lbi.DataContext));
+                    YoutubeHook.Current.Show();
                     Close();
                 }
             }
         }
-        
+
 
         private void YoutubeSearch_Loaded(object sender, RoutedEventArgs e) {
             Width = SystemParameters.PrimaryScreenWidth / 1.4;
@@ -59,7 +67,7 @@ namespace Youtube {
             Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
             Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
 
-            Task.Factory.StartNew(() => GetResults());
+            Task.Factory.StartNew(GetResults);
         }
 
         private void GetResults() {
@@ -76,7 +84,7 @@ namespace Youtube {
             SearchListResponse resp = req.Execute();
             _results = resp.Items.Where(itm => itm.Id.Kind == "youtube#video").ToList();
 
-            Dispatcher.Invoke(() => UpdateItems());
+            Dispatcher.Invoke(UpdateItems);
         }
 
         private void UpdateItems() {
@@ -92,13 +100,21 @@ namespace Youtube {
                 };
 
                 lbi.MouseDoubleClick += (sender, e) => {
-                    new YoutubeVideo(item).Show();
+
+                    if(YoutubeHook.Current != null) {
+                        if(YoutubeHook.Current.IsLoaded) {
+                            YoutubeHook.Current.Close();
+                        }
+                    }
+
+                    YoutubeHook.Current = new YoutubeVideo(item);
+                    YoutubeHook.Current.Show();
                     Close();
                 };
-                                                                
+
                 stacker.Items.Add(lbi);
             });
-                        
+
         }
 
     }

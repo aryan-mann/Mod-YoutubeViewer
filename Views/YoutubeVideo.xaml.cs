@@ -93,7 +93,7 @@ namespace Youtube {
             Browser.Navigate(videoUrl);
 
 
-            WindowState = WindowState.Maximized;
+            WindowState = YoutubeHook.State;
 
             //Width = SystemParameters.PrimaryScreenWidth;
             //Height = SystemParameters.PrimaryScreenHeight;
