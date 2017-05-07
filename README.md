@@ -11,9 +11,13 @@ Four steps to play a video? That's a bit too much for lazy people. Why not bring
 
 ## Commands
 
-- ``yplay {id}`` - Directly play videos if you know their IDs.
-- ``ysearch {name}`` - Search for videos and choose one from the results to play.
-- ``yforce {name}`` - Play the first video that pops up in the search results.
+The trigger/prefix is ``yt``.
+
+- ``play {id}`` - Directly play videos if you know their IDs.
+- ``search {name}`` - Search for videos and choose one from the results to play.
+- ``force {name}`` - Play the first video that pops up in the search results.
+- ``choose {number}`` - After searching for a video, choose one by its number. | REMOTE ONLY |
+- ``close`` - If a Youtube video is playing, close it. | REMOTE ONLY |
 
 ## Installation
 Just unzip the zip file in the releases section of this repository to the Modules folder of Project Butler. All dependancies included. 
