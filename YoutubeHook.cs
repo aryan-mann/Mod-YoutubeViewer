@@ -18,7 +18,7 @@ namespace Youtube {
 
         #region Useless Stuff
         public override string Name => "Youtube Viewer";
-        public override string SemVer => "0.1.0";
+        public override string SemVer => "0.2.0";
         public override string Author => "Aryan Mann";
         public override Uri Website => new Uri("http://www.aryanmann.com/");
         public override string Prefix => "yt";
@@ -29,22 +29,22 @@ namespace Youtube {
         #endregion
 
         public override Dictionary<string, Regex> RegisteredCommands => new Dictionary<string, Regex>() {
-            ["play id"] = new Regex(@"^play (?<id>[A-Za-z0-9]{11})$"), //VideoIDs are 11 characters long
-            ["search"] = new Regex(@"^search (?<name>.+?)$"),
-            ["force search"] = new Regex(@"^force (?<name>.+)$"),
-            ["choose"] = new Regex(@"^choose (?<choice>\d{1,2})$"),
-            ["close"] = new Regex(@"^(close|stop)$"),
-            ["window state"] = new Regex(@"^window state (?<state>(min|max)(imize)?)$")
+            ["Play ID"] = new Regex(@"^play (?<id>[A-Za-z0-9]{11})$"),
+            ["Search"] = new Regex(@"^search (?<name>.+?)$"),
+            ["Lucky Search"] = new Regex(@"^lucky (?<name>.+)$"),
+            ["Choose Option"] = new Regex(@"^choose (?<choice>\d{1,2})$"),
+            ["Close"] = new Regex(@"^(close|stop)$"),
+            ["State"] = new Regex(@"^state (?<state>(min|max)(imize)?)$")
         };
 
         //ENTER API KEY HERE
-        public static string ApiKey { get; } = "";
+        public static string ApiKey { get; } = "AIzaSyDmZ5rGzV38mrGfcSMPegvx8xxndSHmnT4";
 
         public SearchListResponse LastSearchResponse;
         public static YoutubeVideo Current;
         public static WindowState State = WindowState.Maximized;
 
-        private YoutubeVideo _video;
+        private YoutubeVideo _video;    
 
         public override void OnCommandRecieved(Command cmd) {
 
@@ -60,7 +60,7 @@ namespace Youtube {
                 return;
             }
 
-            if(commandName == "play id") {
+            if(commandName == "Play ID") {
                 string id = RegisteredCommands[commandName].Match(userInput).Groups["id"].Value.ToString();
 
                 if(Current != null) {
@@ -73,7 +73,7 @@ namespace Youtube {
                 Current.Show();
             }
 
-            if(commandName == "search") {
+            if(commandName == "Search") {
                 Match m = RegisteredCommands[commandName].Match(userInput);
 
                 string name = m.Groups["name"].Value.ToString();
@@ -104,7 +104,7 @@ namespace Youtube {
                 }
             }
 
-            if(commandName == "force search") {
+            if(commandName == "Lucky Search") {
                 Match m = RegisteredCommands[commandName].Match(userInput);
 
                 YouTubeService ys = new YouTubeService(new BaseClientService.Initializer() {
@@ -125,7 +125,7 @@ namespace Youtube {
                 Current.Show();
             }
 
-            if (commandName == "choose") {
+            if (commandName == "Choose Option") {
                 string choiceString = RegisteredCommands[cmd.LocalCommand].Match(cmd.UserInput).Groups["choice"].Value;
                 int choiceInt;
 
@@ -144,7 +144,7 @@ namespace Youtube {
                 //LastSearchResponse = null;
             }
 
-            if (commandName == "close") {
+            if (commandName == "Close") {
                 if (Current != null) {
                     if (Current.IsLoaded) {
                         Current.Close();
@@ -152,7 +152,7 @@ namespace Youtube {
                 }
             }
 
-            if (commandName == "window state") {
+            if (commandName == "State") {
                 string state = RegisteredCommands[commandName].Match(userInput).Groups["state"].Value.ToLower();
 
                 switch (state) {
@@ -164,6 +164,17 @@ namespace Youtube {
                         break;
                 }
 
+                if (Current != null) {
+                    if (Current.IsLoaded) {
+
+                        if (State == WindowState.Maximized) {
+                            Current.Maximize();
+                        } else {
+                            Current.Minimize();
+                        }
+
+                    }
+                }
             }
         }
 

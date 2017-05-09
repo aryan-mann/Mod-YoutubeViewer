@@ -19,88 +19,52 @@ namespace Youtube {
     /// <summary>
     /// Interaction logic for YoutubeVideo.xaml
     /// </summary>
-    public partial class YoutubeVideo : Window {
-                    
-        string videoID = "";
-        SearchResult video;
-        string videoUrl {
-            get {
-                return $@"https://www.youtube.com/embed/{videoID}?autoplay=1&fs=0&modestbranding=0&showinfo=0&iv_load_policy=3";
-            }
-        }
-        string queryUrl {
-            get {
-                return $@"https://www.googleapis.com/youtube/v3/videos?id={videoID}&key={YoutubeHook.ApiKey}&part=status&fields=items(id,status(uploadStatus,privacyStatus))";
-            }
-        }
-        
-        /// <summary>
-        /// Open a window that plays youtube videos.
-        /// </summary>
-        /// <param name="_videoID">ID of the video</param>
+    public partial class YoutubeVideo: Window {
+
+        public string VideoID { get; private set; }
+        public string VideoUrl => $@"http://www.youtube.com/watch?v={VideoID}";
+
         public YoutubeVideo(SearchResult _res) {
             InitializeComponent();
-            
-            videoID = _res.Id.VideoId;
-            video = _res;
+
+            VideoID = _res.Id.VideoId;
             Loaded += YoutubeVideo_Loaded;
-
-            Title = video.Snippet.Title;
-
-            Browser.Navigated += Browser_Navigated;
-
-            KeyDown += (sender, e) => {
-                if(e.Key == Key.Escape) {
-                    Close();
-                }
-            };
-
-            Closing += YoutubeVideo_Closing;
         }
-
         public YoutubeVideo(string _id) {
             InitializeComponent();
 
-            videoID = _id;
+            VideoID = _id;
             Loaded += YoutubeVideo_Loaded;
-
-            Browser.Navigated += Browser_Navigated;
-
-            KeyDown += (sender, e) => {
-                if(e.Key == Key.Escape) {
-                    Close();
-                }
-            };
-
-            Closing += YoutubeVideo_Closing;
         }
 
-
-        private void Browser_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e) {
-            Browser.Navigated += (s, e2) => {
-                dynamic activeX = Browser.GetType().InvokeMember("ActiveXInstance",
-                    BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                    null, Browser, new object[] { });
-                activeX.Silent = true;
-            };
+        public void Maximize() {
+            Width = SystemParameters.FullPrimaryScreenWidth;
+            Height = SystemParameters.FullPrimaryScreenHeight;
+            Left = 0;
+            Top = 0;
+            Show();
         }
-
-        private void YoutubeVideo_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            Browser.Dispose();
+        public void Minimize() {
+            ShowInTaskbar = false;
+            Hide();
         }
 
         private void YoutubeVideo_Loaded(object sender, RoutedEventArgs e) {
-            Browser.Navigate(videoUrl);
-
-
             WindowState = YoutubeHook.State;
 
-            //Width = SystemParameters.PrimaryScreenWidth;
-            //Height = SystemParameters.PrimaryScreenHeight;
+            if (WindowState == WindowState.Maximized) {
+                Maximize();
+            } else {
+                Minimize();
+            }
 
-            //Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-            //Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
+            KeyDown += (o, args) => {
+                if(args.Key == Key.Escape) { Hide(); }
+            };
 
+            Browser.Navigate(VideoUrl);
+            Closing += (o, args) => Browser.Dispose();
         }
+        
     }
 }

@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Youtube"
         mc:Ignorable="d"
-        Title="YoutubeVideo" Height="720" Width="1280" WindowStyle="None">
+        Title="YoutubeVideo" Height="720" Width="1280" WindowStyle="None" AllowsTransparency="False" ShowInTaskbar="False">
     <Grid>
         <WebBrowser x:Name="Browser"/>
-
     </Grid>
 </Window>
