@@ -23,9 +23,9 @@ namespace Youtube {
         public override Uri Website => new Uri("http://www.aryanmann.com/");
         public override string Prefix => "yt";
 
-        public override void ConfigureSettings() { }
-        public override void OnInitialized() { }
-        public override void OnShutdown() { }
+        public override async Task ConfigureSettings() { await Task.CompletedTask; }
+        public override async Task OnInitialized() { await Task.CompletedTask; }
+        public override async Task OnShutdown() { await Task.CompletedTask; }
         #endregion
 
         public override Dictionary<string, Regex> RegisteredCommands => new Dictionary<string, Regex>() {
@@ -46,10 +46,11 @@ namespace Youtube {
 
         private YoutubeVideo _video;    
 
-        public override void OnCommandRecieved(Command cmd) {
-
+        public override async Task OnCommandRecieved(Command cmd) {
+            
             string commandName = cmd.LocalCommand;
             string userInput = cmd.UserInput;
+            
 
             if (string.IsNullOrEmpty(ApiKey)) {
 
@@ -69,8 +70,10 @@ namespace Youtube {
                     }
                 }
 
-                Current = new YoutubeVideo(id);
-                Current.Show();
+                Application.Current.Dispatcher.Invoke(() => {
+                    Current = new YoutubeVideo(id);
+                    Current.Show();
+                });
             }
 
             if(commandName == "Search") {
@@ -79,7 +82,11 @@ namespace Youtube {
                 string name = m.Groups["name"].Value.ToString();
                 if(!string.IsNullOrWhiteSpace(name)) {
                     if(cmd.IsLocalCommand) {
-                        new YoutubeSearch(name).Show();
+
+                        Application.Current.Dispatcher.Invoke(() => {
+                            new YoutubeSearch(name).Show();
+                        });
+
                     } else {
                         YouTubeService ys = new YouTubeService(new BaseClientService.Initializer() {
                             ApiKey = YoutubeHook.ApiKey,
@@ -121,8 +128,11 @@ namespace Youtube {
 
                 if(Current != null) { if(Current.IsLoaded) Current.Close(); }
 
-                Current = new YoutubeVideo(resp.Items[0].Id.VideoId);
-                Current.Show();
+                Application.Current.Dispatcher.Invoke(() => {
+                    Current = new YoutubeVideo(resp.Items[0].Id.VideoId);
+                    Current.Show();
+                });
+
             }
 
             if (commandName == "Choose Option") {
@@ -137,8 +147,11 @@ namespace Youtube {
 
                 if(Current != null) { if(Current.IsLoaded) Current.Close(); }
 
-                Current = new YoutubeVideo(LastSearchResponse.Items[choiceInt].Id.VideoId);
-                Current.Show();
+                Application.Current.Dispatcher.Invoke(() => {
+                    Current = new YoutubeVideo(LastSearchResponse.Items[choiceInt].Id.VideoId);
+                    Current.Show();
+                });
+
 
                 // Should I clear the search options after an option has been selected?
                 //LastSearchResponse = null;
